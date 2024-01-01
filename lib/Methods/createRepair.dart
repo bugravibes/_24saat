@@ -1,4 +1,4 @@
-import 'package:_24saat/Objects/Repair.dart';
+import '../Models/Repair.dart';
 
 void createRepairObject(
     {required DateTime dateReceive,
