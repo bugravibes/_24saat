@@ -147,67 +147,89 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.9, // Set the width as needed (80% of the screen width in this example)
+                                              0.9, // Set the width as needed (80% of the screen width in this sexample)
                                           child: Card(
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    height: 200,
-                                                    color: Colors.amber,
-                                                    child: ClipRRect(
-                                                      child: repair
-                                                                  .watchPhoto !=
-                                                              null
-                                                          ? Image.memory(
-                                                              base64Decode(repair
-                                                                  .watchPhoto),
-                                                              fit: BoxFit.fill,
-                                                              height: double
-                                                                  .infinity,
-                                                              width: double
-                                                                  .infinity,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                            )
-                                                          : Image.asset(
-                                                              'assets/watchPhoto.jpg',
-                                                              fit: BoxFit.cover,
-                                                              height: double
-                                                                  .infinity,
-                                                              width: double
-                                                                  .infinity,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                            ),
-                                                    ),
-                                                  ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      LayoutBuilder(
+                                                        builder: (BuildContext
+                                                                context,
+                                                            BoxConstraints
+                                                                constraints) {
+                                                          double aspectRatio = 8 /
+                                                              9; // Set your desired aspect ratio here
 
-                                                  ListTile(
-                                                    title: Text(
-                                                        'Saat: ${repair?.watchBrand ?? 'N/A'}'),
-                                                  ),
+                                                          return Container(
+                                                            height: constraints
+                                                                    .maxWidth /
+                                                                aspectRatio,
+                                                            width: constraints
+                                                                .maxWidth,
+                                                            child:
+                                                                repair.watchPhoto !=
+                                                                        null
+                                                                    ? Image
+                                                                        .memory(
+                                                                        base64Decode(
+                                                                            repair.watchPhoto),
+                                                                        fit: BoxFit
+                                                                            .fill,
+                                                                        width: double
+                                                                            .infinity,
+                                                                        height:
+                                                                            double.infinity,
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                      )
+                                                                    : Image
+                                                                        .asset(
+                                                                        'assets/watchPhoto.jpg',
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        width: double
+                                                                            .infinity,
+                                                                        height:
+                                                                            double.infinity,
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                      ),
+                                                          );
+                                                        },
+                                                      ),
 
-                                                  ListTile(
-                                                    title: Text(
-                                                        'Kod: ${repair?.code ?? 'N/A'}'),
+                                                      ListTile(
+                                                        title: Text(
+                                                            'Saat: ${repair?.watchBrand ?? 'N/A'}'),
+                                                      ),
+                                                      ListTile(
+                                                        title: Text(
+                                                            'Kod: ${repair?.code ?? 'N/A'}'),
+                                                      ),
+                                                      ListTile(
+                                                        title: Text(
+                                                            'Sahibi: ${repair?.nameCustomer ?? 'N/A'}'),
+                                                      ),
+                                                      ListTile(
+                                                        title: Text(
+                                                            'Teslim Alan: ${repair?.nameReceiver ?? 'N/A'}'),
+                                                      ),
+                                                      ListTile(
+                                                        title: Text(
+                                                            'İşlem: ${repair?.operation ?? 'N/A'}'),
+                                                      ),
+                                                      // Add more ListTile widgets with relevant details
+                                                    ],
                                                   ),
-                                                  ListTile(
-                                                    title: Text(
-                                                        'Sahibi: ${repair?.nameCustomer ?? 'N/A'}'),
-                                                  ),
-                                                  ListTile(
-                                                    title: Text(
-                                                        'Teslim Alan: ${repair?.nameReceiver ?? 'N/A'}'),
-                                                  ),
-                                                  ListTile(
-                                                    title: Text(
-                                                        'İşlem: ${repair?.operation ?? 'N/A'}'),
-                                                  ),
-                                                  // Add more ListTile widgets with relevant details
-                                                ],
+                                                ),
                                               ),
                                             ),
                                           ),
