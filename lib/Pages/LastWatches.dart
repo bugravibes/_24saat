@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'Models/Repair.dart';
-import 'fetchRepairs.dart';
+import '../Models/Repair.dart';
+import '../Methods/fetchRepairs.dart';
 import 'addRepair.dart';
 
 class RepairDetailsPage extends StatefulWidget {
