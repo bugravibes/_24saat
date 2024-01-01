@@ -140,55 +140,75 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                           textAlign: TextAlign.center,
                                         ),
                                         content: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.7,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.9, // Set the width as needed (80% of the screen width in this example)
                                           child: Card(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                repair.watchPhoto != null
-                                                    ? Image.memory(
-                                                        base64Decode(repair
-                                                            .watchPhoto), // Decode base64 image data
-                                                        fit: BoxFit.fill,
-                                                        height: double.infinity,
-                                                        width: double.infinity,
-                                                        alignment:
-                                                            Alignment.center,
-                                                      )
-                                                    : Image.asset(
-                                                        'assets/watchPhoto.jpg',
-                                                        fit: BoxFit.cover,
-                                                        height: double.infinity,
-                                                        width: double.infinity,
-                                                        alignment:
-                                                            Alignment.center,
-                                                      ),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    height: 200,
+                                                    color: Colors.amber,
+                                                    child: ClipRRect(
+                                                      child: repair
+                                                                  .watchPhoto !=
+                                                              null
+                                                          ? Image.memory(
+                                                              base64Decode(repair
+                                                                  .watchPhoto),
+                                                              fit: BoxFit.fill,
+                                                              height: double
+                                                                  .infinity,
+                                                              width: double
+                                                                  .infinity,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                            )
+                                                          : Image.asset(
+                                                              'assets/watchPhoto.jpg',
+                                                              fit: BoxFit.cover,
+                                                              height: double
+                                                                  .infinity,
+                                                              width: double
+                                                                  .infinity,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                            ),
+                                                    ),
+                                                  ),
 
-                                                ListTile(
-                                                  title: Text(
-                                                      'Saat: ${repair?.watchBrand ?? 'N/A'}'),
-                                                ),
-                                                ListTile(
-                                                  title: Text(
-                                                      'Kod: ${repair?.code ?? 'N/A'}'),
-                                                ),
-                                                ListTile(
-                                                  title: Text(
-                                                      'Sahibi: ${repair?.nameCustomer ?? 'N/A'}'),
-                                                ),
-                                                ListTile(
-                                                  title: Text(
-                                                      'Teslim Alan: ${repair?.nameReceiver ?? 'N/A'}'),
-                                                ),
-                                                ListTile(
-                                                  title: Text(
-                                                      'İşlem: ${repair?.operation ?? 'N/A'}'),
-                                                ),
-                                                // Add more ListTile widgets with relevant details
-                                              ],
+                                                  ListTile(
+                                                    title: Text(
+                                                        'Saat: ${repair?.watchBrand ?? 'N/A'}'),
+                                                  ),
+
+                                                  ListTile(
+                                                    title: Text(
+                                                        'Kod: ${repair?.code ?? 'N/A'}'),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                        'Sahibi: ${repair?.nameCustomer ?? 'N/A'}'),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                        'Teslim Alan: ${repair?.nameReceiver ?? 'N/A'}'),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                        'İşlem: ${repair?.operation ?? 'N/A'}'),
+                                                  ),
+                                                  // Add more ListTile widgets with relevant details
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
