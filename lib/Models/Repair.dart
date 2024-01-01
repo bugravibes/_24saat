@@ -40,7 +40,7 @@ class Repair {
         watchPhoto: json['watch_photo'] ?? '',
         lastStatus: json['last_status'] ?? 'null',
         operation: json['operation'],
-        code: json['code'],
+        code: json['code'] ?? 'kod',
         customerPhone: json['customerPhone'] ?? 'girilmedi');
   }
 }

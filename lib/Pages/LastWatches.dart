@@ -64,18 +64,19 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                         ),
                       ),
                       height: 80,
+                      width: double.infinity,
                       child: Row(
                         children: [
                           Expanded(
                             flex: 2,
                             child: Container(
-                              color: Colors.grey,
-                              child: Center(
+                              color: Colors.grey.withOpacity(0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
                                 child: repair.watchPhoto != null
                                     ? Image.memory(
-                                        base64Decode(repair
-                                            .watchPhoto), // Decode base64 image data
-                                        fit: BoxFit.cover,
+                                        base64Decode(repair.watchPhoto),
+                                        fit: BoxFit.fill,
                                         height: double.infinity,
                                         width: double.infinity,
                                         alignment: Alignment.center,
