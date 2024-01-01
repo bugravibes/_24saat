@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'Objects/Repair.dart';
+import 'Models/Repair.dart';
 import 'fetchRepairs.dart';
 import 'addRepair.dart';
 
