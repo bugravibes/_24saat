@@ -41,6 +41,6 @@ class Repair {
         lastStatus: json['last_status'] ?? 'null',
         operation: json['operation'],
         code: json['code'] ?? 'kod',
-        customerPhone: json['customerPhone'] ?? 'girilmedi');
+        customerPhone: json['phone_number'] ?? 'girilmedi');
   }
 }

@@ -12,6 +12,11 @@ class RepairDetailsPage extends StatefulWidget {
 
 class _RepairDetailsPageState extends State<RepairDetailsPage> {
   int _selectedIndex = 0;
+  @override
+  void initState() {
+    fetchRepairs();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

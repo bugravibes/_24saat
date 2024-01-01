@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:_24saat/Pages/LastWatches.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,54 +9,63 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:typed_data';
 
-void sendRepairDataWithImage() async {
+Future<void> sendRepairDataWithImage(
+  String customer,
+  String receiver,
+  String phoneNumber,
+  String watchBrand,
+  String watchModel,
+  String watchBand,
+  String operation,
+  File? image,
+) async {
+  print('Sending repair data:');
+  print('Customer: $customer');
+  print('Receiver: $receiver');
+  print('Phone Number: $phoneNumber');
+  print('Watch Brand: $watchBrand');
+  print('Watch Model: $watchModel');
+  print('Watch Band: $watchBand');
+  print('Operation: $operation');
+  print('Selected Image Path: ${image?.path}');
   // Replace with your backend URL
-  var url = Uri.parse('http://your_backend_url/add_repair.php');
-
-  // Retrieve the image using ImagePicker
-  final ImagePicker _picker = ImagePicker();
-  XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  var url = Uri.parse(
+      'https://avukatraziyegulacaracikyurek.com/backend/addRepair.php');
 
   if (image != null) {
-    // Convert the image to bytes (Uint8List)
-    List<int> imageBytes = await image.readAsBytes();
-    String base64Image = base64Encode(imageBytes);
-
-    // Replace these fields with your repair data
-    Map<String, String> data = {
-      'watch_brand': 'Your watch brand',
-      'code': 'Your code',
-      // Add other repair fields here
-      'note':
-          'Your repair note', // Assuming 'note' is one of the repair data fields
-    };
-
-    // Add the image to the data as a base64 string
-    data['image'] = base64Image;
-
     // Create a multipart request
     var request = http.MultipartRequest('POST', url);
 
     // Add repair data fields to the request
-    data.forEach((key, value) {
-      request.fields[key] = value;
-    });
+    request.fields['name_customer'] = customer;
+    request.fields['name_receiver'] = receiver;
+    request.fields['watch_brand'] = watchBrand;
+    request.fields['watch_model'] = watchModel;
+    request.fields['watch_band'] = watchBand;
+    request.fields['operation'] = operation;
+    request.fields['phone_number'] = phoneNumber;
+    request.fields['code'] = 'default';
+    request.fields['note'] =
+        'Your repair note'; // Assuming 'note' is one of the repair data fields
 
     // Attach the image to the request
-    request.files.add(http.MultipartFile.fromString(
-      'image',
-      base64Image,
-      filename: 'repair_image.jpg',
+    request.files.add(await http.MultipartFile.fromPath(
+      'watch_photo',
+      image.path, // File path of the image
+      filename: 'repair_image.jpg', // Filename for the image
     ));
 
-    // Send the request
-    var response = await request.send();
+    try {
+      var response = await http.Response.fromStream(await request.send());
 
-    // Handle the response
-    if (response.statusCode == 200) {
-      print('Image and data uploaded successfully');
-    } else {
-      print('Failed to upload image and data');
+      if (response.statusCode == 200) {
+        var responseData = response.body;
+        print('Response: $responseData');
+      } else {
+        print('Failed to upload image and data: ${response.reasonPhrase}');
+      }
+    } catch (error) {
+      print('Error uploading data: $error');
     }
   }
 }
@@ -70,6 +80,7 @@ class _AddRepairPageState extends State<AddRepairPage> {
   TextEditingController codeController = TextEditingController();
   TextEditingController watchModelController = TextEditingController();
   TextEditingController watchBandController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
   String lastStatusController = "Teslim Alındı";
   TextEditingController operationController = TextEditingController();
   TextEditingController customerController = TextEditingController();
@@ -81,12 +92,49 @@ class _AddRepairPageState extends State<AddRepairPage> {
 
   void _handleImageSelection() async {
     final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path); // Store the selected image as a File
-      });
-    }
+
+    // Show options to pick image from gallery or take a new picture
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Photo Library'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  XFile? image =
+                      await _picker.pickImage(source: ImageSource.gallery);
+                  if (image != null) {
+                    setState(() {
+                      _selectedImage = File(
+                          image.path); // Store the selected image as a File
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  XFile? image =
+                      await _picker.pickImage(source: ImageSource.camera);
+                  if (image != null) {
+                    setState(() {
+                      _selectedImage = File(
+                          image.path); // Store the selected image as a File
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _addNoteTextField() {
@@ -183,13 +231,18 @@ class _AddRepairPageState extends State<AddRepairPage> {
 
               SizedBox(height: 20.0),
               TextField(
-                controller: watchBrandController,
+                controller: customerController,
                 decoration: InputDecoration(labelText: 'Müşteri Adı'),
+              ),
+              TextField(
+                controller: phoneNumberController,
+                decoration: InputDecoration(labelText: 'İletişim'),
               ),
               TextField(
                 controller: receiverController,
                 decoration: InputDecoration(labelText: 'Teslim Alan'),
               ),
+
               TextField(
                 controller: watchBrandController,
                 decoration: InputDecoration(labelText: 'Saat Markası'),
@@ -222,7 +275,23 @@ class _AddRepairPageState extends State<AddRepairPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         onPressed: () {
-          // Handle action when FloatingActionButton is pressed
+          sendRepairDataWithImage(
+                  customerController.text,
+                  receiverController.text,
+                  phoneNumberController.text,
+                  watchBrandController.text,
+                  watchModelController.text,
+                  watchBandController.text,
+                  operationController.text,
+                  _selectedImage)
+              .then((_) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RepairDetailsPage(),
+              ),
+            );
+          }).catchError((error) {});
         },
         child: Icon(Icons.add),
       ),
