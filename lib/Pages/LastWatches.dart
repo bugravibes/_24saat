@@ -12,6 +12,11 @@ class RepairDetailsPage extends StatefulWidget {
 
 class _RepairDetailsPageState extends State<RepairDetailsPage> {
   int _selectedIndex = 0;
+  @override
+  void initState() {
+    fetchRepairs();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +210,10 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                                   ListTile(
                                                     title: Text(
                                                         'İşlem: ${repair?.operation ?? 'N/A'}'),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                        'İletişim: ${repair?.customerPhone ?? 'N/A'}'),
                                                   ),
                                                   // Add more ListTile widgets with relevant details
                                                 ],
