@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../Models/Repair.dart';
 import '../Methods/fetchRepairs.dart';
 import 'addRepair.dart';
+import 'dart:convert';
 
 class RepairDetailsPage extends StatefulWidget {
   @override
@@ -70,13 +71,22 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                             child: Container(
                               color: Colors.grey,
                               child: Center(
-                                child: Image.asset(
-                                  'assets/watchPhoto.jpg',
-                                  fit: BoxFit.cover,
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                ),
+                                child: repair.watchPhoto != null
+                                    ? Image.memory(
+                                        base64Decode(repair
+                                            .watchPhoto), // Decode base64 image data
+                                        fit: BoxFit.cover,
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        alignment: Alignment.center,
+                                      )
+                                    : Image.asset(
+                                        'assets/watchPhoto.jpg',
+                                        fit: BoxFit.cover,
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        alignment: Alignment.center,
+                                      ),
                               ),
                             ),
                           ),
@@ -137,15 +147,25 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Container(
-                                                  height:
-                                                      200, // Set the height as needed
-                                                  width: double.infinity,
-                                                  child: Image.asset(
-                                                    'assets/watchPhoto.jpg',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
+                                                repair.watchPhoto != null
+                                                    ? Image.memory(
+                                                        base64Decode(repair
+                                                            .watchPhoto), // Decode base64 image data
+                                                        fit: BoxFit.fill,
+                                                        height: double.infinity,
+                                                        width: double.infinity,
+                                                        alignment:
+                                                            Alignment.center,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/watchPhoto.jpg',
+                                                        fit: BoxFit.cover,
+                                                        height: double.infinity,
+                                                        width: double.infinity,
+                                                        alignment:
+                                                            Alignment.center,
+                                                      ),
+
                                                 ListTile(
                                                   title: Text(
                                                       'Saat: ${repair?.watchBrand ?? 'N/A'}'),
