@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:_24saat/Methods/getImageWidth.dart';
 import 'package:_24saat/Pages/LastWatches.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,67 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:typed_data';
-
-Future<void> sendRepairDataWithImage(
-  String customer,
-  String receiver,
-  String phoneNumber,
-  String watchBrand,
-  String watchModel,
-  String watchBand,
-  String operation,
-  File? image,
-) async {
-  print('Sending repair data:');
-  print('Customer: $customer');
-  print('Receiver: $receiver');
-  print('Phone Number: $phoneNumber');
-  print('Watch Brand: $watchBrand');
-  print('Watch Model: $watchModel');
-  print('Watch Band: $watchBand');
-  print('Operation: $operation');
-  print('Selected Image Path: ${image?.path}');
-  // Replace with your backend URL
-  var url = Uri.parse(
-      'https://avukatraziyegulacaracikyurek.com/backend/addRepair.php');
-
-  if (image != null) {
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', url);
-
-    // Add repair data fields to the request
-    request.fields['name_customer'] = customer;
-    request.fields['name_receiver'] = receiver;
-    request.fields['watch_brand'] = watchBrand;
-    request.fields['watch_model'] = watchModel;
-    request.fields['watch_band'] = watchBand;
-    request.fields['operation'] = operation;
-    request.fields['phone_number'] = phoneNumber;
-    request.fields['code'] = 'default';
-    request.fields['note'] =
-        'Your repair note'; // Assuming 'note' is one of the repair data fields
-
-    // Attach the image to the request
-    request.files.add(await http.MultipartFile.fromPath(
-      'watch_photo',
-      image.path, // File path of the image
-      filename: 'repair_image.jpg', // Filename for the image
-    ));
-
-    try {
-      var response = await http.Response.fromStream(await request.send());
-
-      if (response.statusCode == 200) {
-        var responseData = response.body;
-        print('Response: $responseData');
-      } else {
-        print('Failed to upload image and data: ${response.reasonPhrase}');
-      }
-    } catch (error) {
-      print('Error uploading data: $error');
-    }
-  }
-}
+import 'package:path_provider/path_provider.dart';
+import '../Methods/saveImageToDevice.dart';
+import '../Methods/sendRepairDataWithImage.dart';
+import '../Methods/handleImageSelection.dart';
 
 class AddRepairPage extends StatefulWidget {
   @override
@@ -76,6 +20,21 @@ class AddRepairPage extends StatefulWidget {
 }
 
 class _AddRepairPageState extends State<AddRepairPage> {
+  late HandleImageSelection _handleImageSelectionw;
+  File? _selectedImage; // Store the selected image as a File
+
+  Future<String?> _handleImageSelection() async {
+    if (_selectedImage == null) {
+      String imagePath = await _handleImageSelectionw.handleImageSelection();
+      if (imagePath.isNotEmpty) {
+        setState(() {
+          _selectedImage = File(imagePath);
+        });
+      }
+    }
+    return _selectedImage?.path;
+  }
+
   TextEditingController watchBrandController = TextEditingController();
   TextEditingController codeController = TextEditingController();
   TextEditingController watchModelController = TextEditingController();
@@ -86,56 +45,20 @@ class _AddRepairPageState extends State<AddRepairPage> {
   TextEditingController customerController = TextEditingController();
   TextEditingController receiverController = TextEditingController();
 
-  File? _selectedImage; // Store the selected image as a File
+  @override
+  void initState() {
+    super.initState();
+    _handleImageSelectionw =
+        HandleImageSelection(context, onImageSelected: _updateSelectedImage);
+  }
+
+  void _updateSelectedImage(String imagePath) {
+    setState(() {
+      _selectedImage = File(imagePath);
+    });
+  }
 
   List<Widget> noteTextFields = []; // Store the dynamically created TextFields
-
-  void _handleImageSelection() async {
-    final ImagePicker _picker = ImagePicker();
-
-    // Show options to pick image from gallery or take a new picture
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Photo Library'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  XFile? image =
-                      await _picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    setState(() {
-                      _selectedImage = File(
-                          image.path); // Store the selected image as a File
-                    });
-                  }
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Camera'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  XFile? image =
-                      await _picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    setState(() {
-                      _selectedImage = File(
-                          image.path); // Store the selected image as a File
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   void _addNoteTextField() {
     setState(() {
@@ -163,19 +86,6 @@ class _AddRepairPageState extends State<AddRepairPage> {
     });
   }
 
-  Future<int?> getImageWidth(File? image) async {
-    if (image != null) {
-      final Completer<ui.Image> completer = Completer();
-      final data = await image.readAsBytes();
-      ui.decodeImageFromList(Uint8List.fromList(data), (result) {
-        completer.complete(result);
-      });
-      final img = await completer.future;
-      return img.width;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,7 +99,10 @@ class _AddRepairPageState extends State<AddRepairPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               InkWell(
-                onTap: _handleImageSelection,
+                onTap: () async {
+                  String? imagePath = await _handleImageSelection();
+                  // Check imagePath for nullability and use it if needed
+                },
                 child: Container(
                   height: 180,
                   width: 180,
@@ -200,7 +113,7 @@ class _AddRepairPageState extends State<AddRepairPage> {
                   child: Center(
                     child: _selectedImage != null
                         ? FutureBuilder<int?>(
-                            future: getImageWidth(_selectedImage),
+                            future: GetImageWidth.getImageWidth(_selectedImage),
                             builder: (BuildContext context,
                                 AsyncSnapshot<int?> snapshot) {
                               if (snapshot.connectionState ==
@@ -274,24 +187,29 @@ class _AddRepairPageState extends State<AddRepairPage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
-        onPressed: () {
-          sendRepairDataWithImage(
-                  customerController.text,
-                  receiverController.text,
-                  phoneNumberController.text,
-                  watchBrandController.text,
-                  watchModelController.text,
-                  watchBandController.text,
-                  operationController.text,
-                  _selectedImage)
-              .then((_) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RepairDetailsPage(),
-              ),
-            );
-          }).catchError((error) {});
+        onPressed: () async {
+          if (_selectedImage != null) {
+            String imagePath = _selectedImage!.path;
+            SendRepairDataWithImage.sendRepairDataWithImage(
+              customerController.text,
+              receiverController.text,
+              phoneNumberController.text,
+              watchBrandController.text,
+              watchModelController.text,
+              watchBandController.text,
+              operationController.text,
+              imagePath,
+            ).then((_) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RepairDetailsPage(),
+                ),
+              );
+            }).catchError((error) {});
+          } else {
+            // Handle case where no image is selected
+          }
         },
         child: Icon(Icons.add),
       ),
