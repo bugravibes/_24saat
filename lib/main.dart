@@ -93,8 +93,10 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context,
-                      '/repairDetails'); // Navigate to RepairDetailsPage
+                  Navigator.pushReplacementNamed(
+                    context,
+                    '/repairDetails',
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

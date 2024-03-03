@@ -40,7 +40,7 @@ class _AddRepairPageState extends State<AddRepairPage> {
   TextEditingController watchModelController = TextEditingController();
   TextEditingController watchBandController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
-  String lastStatusController = "Teslim Alındı";
+  String lastStatusController = "Teslim Alindi";
   TextEditingController operationController = TextEditingController();
   TextEditingController customerController = TextEditingController();
   TextEditingController receiverController = TextEditingController();

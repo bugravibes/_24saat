@@ -31,8 +31,9 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
-          'Repair Details',
+          'Saatler',
           textAlign: TextAlign.center,
         ),
       ),
@@ -126,8 +127,7 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                 color: Colors.blue.withOpacity(0.2),
                                 child: Center(
                                   child: Text(
-                                    repair?.code ?? 'N/A',
-                                    textAlign: TextAlign.center,
+                                    '${repair?.code?.toUpperCase() ?? 'N/A'}',
                                   ),
                                 ),
                               ),
@@ -230,7 +230,8 @@ class _RepairDetailsPageState extends State<RepairDetailsPage> {
                                                         ),
                                                         ListTile(
                                                           title: Text(
-                                                              'Kod: ${repair?.code ?? 'N/A'}'),
+                                                            'Kod: ${repair?.code?.toUpperCase() ?? 'N/A'}',
+                                                          ),
                                                         ),
                                                         ListTile(
                                                           title: Text(
